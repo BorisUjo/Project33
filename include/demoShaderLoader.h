@@ -1,23 +1,61 @@
 #pragma once
 #include <glad/glad.h>
 
-struct Shader
+class Shader
 {
-	GLuint id = 0;
+private:
+    GLuint id = 0;
 
-	bool loadShaderProgramFromData(const char *vertexShaderData, const char *fragmentShaderData);
-	bool loadShaderProgramFromData(const char *vertexShaderData,
-		const char *geometryShaderData, const char *fragmentShaderData);
+public:
+    Shader() = default;
 
-	bool loadShaderProgramFromFile(const char *vertexShader, const char *fragmentShader);
-	bool loadShaderProgramFromFile(const char *vertexShader,
-		const char *geometryShader, const char *fragmentShader);
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
 
-	void bind();
+    Shader(Shader&& other) noexcept
+        : id(other.id)
+    {
+        other.id = 0;
+    }
 
-	void clear();
+    Shader& operator=(Shader&& other) noexcept
+    {
+        if (this != &other)
+        {
+            if (id != 0)
+                glDeleteProgram(id);
 
-	GLint getUniform(const char *name);
+            id = other.id;
+            other.id = 0;
+        }
+        return *this;
+    }
+
+    ~Shader()
+    {
+        if (id != 0)
+            glDeleteProgram(id);
+    }
+
+public:
+    bool loadShaderProgramFromData(const char* vertexShaderData,
+        const char* fragmentShaderData);
+
+    bool loadShaderProgramFromData(const char* vertexShaderData,
+        const char* geometryShaderData,
+        const char* fragmentShaderData);
+
+    bool loadShaderProgramFromFile(const char* vertexShader,
+        const char* fragmentShader);
+
+    bool loadShaderProgramFromFile(const char* vertexShader,
+        const char* geometryShader,
+        const char* fragmentShader);
+
+    void bind();
+    void clear();
+
+    GLint getUniform(const char* name);
 };
 
-GLint getUniform(GLuint shaderId, const char *name);
+GLint getUniform(GLuint shaderId, const char* name);

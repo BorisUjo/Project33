@@ -24,8 +24,6 @@ int Application::init()
 
 	input.addKeyBind({ GLFW_KEY_ESCAPE, [this]() { glfwSetWindowShouldClose(this->window, GLFW_TRUE); } });
 
-
-
 	window = glfwCreateWindow(640, 480, "[_] PROJECT: 33", NULL, NULL);
 	if (!window)
 	{
@@ -53,20 +51,56 @@ void Application::run()
 {
 
 	TestingScene scene;
+	PickingTexture picker;
+
+
+	scene.configure_inputs(input);
 
 	scene.init();
+	scene.set_window(window);
+
+	int w = 0, h= 0;
+	glfwGetFramebufferSize(window, &w, &h);
+	picker.initialise(w,h);
+
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window))
 	{
 		int width = 0, height = 0;
-
 		glfwGetFramebufferSize(window, &width, &height);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		input.processInput(window);
-		scene.update();
 
+		glViewport(0, 0, width, height);
+		glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		input.processInput(window);
+		input.processMouseInput(window);	
+
+		// for now picking without raycast, just read the pixel under the mouse cursor from the picking texture.
+		// implement raycasting later
+		// to reduce lag: render only if a unit is selected, or if the mouse moves,
+		// until a unit is selected, picking should only catch units and not every gameobject in the scene
+		// and when a unit is selected, only pick the tiles inside the Unit's move range
+		// maybe have a specific vector of objects to pick through in GameManager
+			picker.enable_writing();
+
+			glViewport(0, 0, width, height);
+
+			scene.picking_render();
+
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			scene.camera.currentPixel = picker.read_pixel(x, height - y - 1);
+
+			picker.disable_writing();
+			
+
+
+		scene.render();
+
+		scene.update();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

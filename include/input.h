@@ -9,21 +9,54 @@ struct KeyBind
 struct InputHandler
 {
 	std::vector<KeyBind> keybinds;
+	std::vector<KeyBind> mouseBinds;
+
+	int previousKeyState = 0;
+	int previousMouseButtonState = 0;
 
 	void addKeyBind(KeyBind bind)
 	{
 		keybinds.push_back(bind);
 	}
 
+	void addMouseBind(KeyBind bind)
+	{
+		mouseBinds.push_back(bind);
+	}
+
 	void processInput(GLFWwindow* window)
 	{
-		for (const auto& bind : keybinds)
+
+		int currentKeyState = 0;
+
+		for (auto& bind : keybinds)
 		{
-			if (glfwGetKey(window, bind.key) == GLFW_PRESS)
+			currentKeyState = glfwGetKey(window, bind.key);
+			if (currentKeyState == GLFW_PRESS && previousKeyState != GLFW_PRESS)
 			{
 				bind.action();
+				break;
+			}
+
+		}
+
+		previousKeyState = currentKeyState;
+
+	}
+
+	void processMouseInput(GLFWwindow* window)
+	{
+		int currentKeyState = 0;
+		for (auto& bind : mouseBinds)
+		{
+			currentKeyState = glfwGetMouseButton(window, bind.key);
+			if (currentKeyState == GLFW_PRESS && previousMouseButtonState != GLFW_PRESS)
+			{
+				bind.action();
+				break;
 			}
 		}
+		previousMouseButtonState = currentKeyState;
 	}
 
 };
