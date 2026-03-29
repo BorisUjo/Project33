@@ -1,2 +1,0 @@
-vertex.vert fragment.frag
-pickingVertex.vert pickingFragment.frag

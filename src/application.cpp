@@ -5,6 +5,11 @@
 #include <demoShaderLoader.h>
 #include <iostream>
 #include <testscene.h>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+
+void init_ui(GLFWwindow* window, ImGuiIO& output);
 
 int Application::init()
 {
@@ -53,11 +58,14 @@ void Application::run()
 	TestingScene scene;
 	PickingTexture picker;
 
+	ImGuiIO io;
 
 	scene.configure_inputs(input);
 
 	scene.init();
 	scene.set_window(window);
+
+	init_ui(window, io);
 
 	int w = 0, h= 0;
 	glfwGetFramebufferSize(window, &w, &h);
@@ -84,23 +92,31 @@ void Application::run()
 		// until a unit is selected, picking should only catch units and not every gameobject in the scene
 		// and when a unit is selected, only pick the tiles inside the Unit's move range
 		// maybe have a specific vector of objects to pick through in GameManager
-			picker.enable_writing();
+		picker.enable_writing();
 
-			glViewport(0, 0, width, height);
+		glViewport(0, 0, width, height);
 
-			scene.picking_render();
+		scene.picking_render();
 
-			double x, y;
-			glfwGetCursorPos(window, &x, &y);
-			scene.camera.currentPixel = picker.read_pixel(x, height - y - 1);
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+		scene.camera.currentPixel = picker.read_pixel(x, height - y - 1);
 
-			picker.disable_writing();
-			
+		picker.disable_writing();
+
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 
 		scene.render();
 
 		scene.update();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -111,4 +127,33 @@ void Application::run()
 	by calling this functions we are just wasting time.*/
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+
+void init_ui(GLFWwindow* window, ImGuiIO& output)
+{
+	const char* glsl_version = "#version 130";
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	output = ImGui::GetIO(); (void)output;
+
+	output.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	output.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	output.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (output.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
 }

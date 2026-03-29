@@ -1,0 +1,10 @@
+-> every player starts with a Settler unit, they use it to settle their first and capital city
+   founding their nation
+
+CITY:
+- city can queue production of up to 1-3 buildings/upgrades 
+- city hall stores the city's resources (gold, food)
+- city buildings (blacksmith, barracks, housing, cultural buildings, windmills, marketplace)
+
+- Buildings can only be built within the city borders , (starting city border is a 3x3 with the center being the city's centre
+

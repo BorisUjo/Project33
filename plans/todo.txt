@@ -1,0 +1,11 @@
+21.3.2026 - 31.3.2026
+---------------------
+-> očisti kod, sve zasad nepotrebno maknuti (šminka, lijepi shaderi, teksture) to kasnije ide
+-> bolji nacin generiranja mape
+-> osnovne mehanike grada (turn based gradnja, ekspanzija)
+-> UI za grad (tab za gradnju, city overview)
+-> vise jedinica (ofenzivna jedinica)
+-> simulacija ratovanja
+
+---------------------
+

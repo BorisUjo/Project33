@@ -44,7 +44,8 @@ public:
 	glm::mat4 projection_view_matrix();
 	glm::mat4 get_PV_static();
 	void input(class GLFWwindow* window);
-
+public:
+	bool mouseLock = false;
 private:
 
 	bool firstClick = true;	

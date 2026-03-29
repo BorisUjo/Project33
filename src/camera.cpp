@@ -20,6 +20,11 @@ glm::mat4 Camera::projection_view_matrix()
 
 void Camera::input(GLFWwindow* window)
 {
+
+	if (!mouseLock)
+	{
+		return;
+	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		Position += speed * Orientation;

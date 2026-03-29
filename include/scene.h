@@ -14,6 +14,7 @@
 #define TREE_TEXTURE 2
 #define UNIT_TEXTURE 3
 #define MOUNTAIN_2_TEXTURE 4
+#define CITY_TEXTURE 5
 
 
 
@@ -30,11 +31,12 @@ struct TextureManager
 
 	void loadFromFile(const char* path)
 	{
+		std::string dir = "textures/";
 		std::ifstream file(path);
 		std::string line;
 		while (std::getline(file, line))
 		{
-			std::string path = RESOURCES_PATH + line;
+			std::string path = RESOURCES_PATH + dir + line;
 			loadTexture(path.c_str());
 		}
 
@@ -49,6 +51,7 @@ struct ShaderManager
 
 #define DEFAULT_SHADER_INDEX 0
 #define PICKING_SHADER_INDEX 1
+#define TILE_SHADER_INDEX 2
 
 	std::vector<Shader> shadersList;
 	void loadShader(const char* vertexPath, const char* fragmentPath)
@@ -59,6 +62,7 @@ struct ShaderManager
 
 	void loadFromFile(const char* path)
 	{
+		std::string dir = "shaders/";
 		std::ifstream file(path);
 		std::string line;
 		while (std::getline(file, line))
@@ -67,8 +71,7 @@ struct ShaderManager
 			std::string vertexFile, fragmentFile;	
 			std::getline(ss, vertexFile, ' ');
 			std::getline(ss, fragmentFile, ' ');
-
-			loadShader((RESOURCES_PATH + vertexFile).c_str(), (RESOURCES_PATH + fragmentFile).c_str());
+			loadShader((RESOURCES_PATH + dir + vertexFile).c_str(), (RESOURCES_PATH + dir + fragmentFile).c_str());
 
 		}
 
