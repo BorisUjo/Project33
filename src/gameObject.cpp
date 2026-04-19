@@ -55,6 +55,9 @@ void GameObject::destroy()
 	gm.destroy(this);
 }
 
+
+
+
 void TilePlane::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 {
 
@@ -81,4 +84,9 @@ void TilePlane::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 	//glDisable(GL_BLEND);
 
 
+}
+
+void TilePlane::set_active(bool state)
+{
+	get_render_object()->set_render_state(state);
 }

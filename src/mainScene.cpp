@@ -52,8 +52,10 @@ void MainScene::init()
 		}
 
 		auto& bord = gameManager.instantiate<TilePlane>();
+		gameManager.tilePlanes.push_back(&bord);
 		bord.initialize_mesh(plane);
 		bord.set_color(glm::vec3(0, 0, 1.0f));
+		bord.tileCoord = Vec2Int(tile.x, tile.y);
 		bord.transform.position = glm::vec3(tile.x * TILE_OFFSET, 0.55f, tile.y * TILE_OFFSET);
 		bord.get_render_object()->set_render_state(false);
 
@@ -71,6 +73,7 @@ void MainScene::init()
 	
 	// temporary add debug unit data
 	// to do : postavi json loading 
+	// to do: postavi mapu za liveData (UnitBaseData) koja poprima pocetnu informaciju iz jsona (unitLoadData ili svoj vlastiti, ali se treba kljuc (id ili unit_type) podudarati u load i base data
 	UnitLoadData debug = generate_debug();
 
 	gameManager.add_unit_data(UNIT_SETTLER_ID,debug);
