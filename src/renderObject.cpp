@@ -85,10 +85,25 @@ void RenderObject::initialise(Mesh& mesh)
 
 }
 
+void RenderObject::set_render_state(bool state)
+{
+	renderEnabled = state;
+}
+
 
 void RenderObject::render()
 {
+	if (!renderEnabled)
+	{
+		return;
+	}
+
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, indicesCount);
 	
+}
+
+bool RenderObject::get_render_state()
+{
+	return renderEnabled;
 }

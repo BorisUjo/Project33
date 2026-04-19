@@ -6,7 +6,7 @@ void GameObject::render()
 	objectMesh.render();
 }
 
-void GameObject::picking_render(ShaderManager& shaderManager, Camera& camera)
+void GameObject::picking_render(ShaderManager& shaderManager, TempCamera& camera)
 {
 	auto* pickingShader = &shaderManager.getShader(PICKING_SHADER_INDEX);
 	pickingShader->bind();
@@ -21,7 +21,7 @@ void GameObject::picking_render(ShaderManager& shaderManager, Camera& camera)
 	glUniform1ui(pickingShader->getUniform("drawIndex"), meshID);
 }
 
-void GameObject::bind_shader(ShaderManager& shaderManager, Camera& camera)
+void GameObject::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 {
 	auto* defaultShader = &shaderManager.getShader(DEFAULT_SHADER_INDEX);
 	defaultShader->bind();
@@ -38,13 +38,47 @@ void GameObject::bind_shader(ShaderManager& shaderManager, Camera& camera)
 
 	glUniformMatrix4fv(defaultShader->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(camera.get_PV_static()));
 	glUniformMatrix4fv(defaultShader->getUniform("transform"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniform3f(defaultShader->getUniform("lightPos"), lightPos.x, lightPos.y, lightPos.z);
 	glUniform1i(defaultShader->getUniform("tex0"), 0);
-	glUniform1i(defaultShader->getUniform("isTile"), false);
-	glUniform1i(defaultShader->getUniform("isForest"), false); // temporary
+	glUniform3f(defaultShader->getUniform("lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(defaultShader->getUniform("objPos"), transform.position.x, transform.position.y, transform.position.z);
+	glUniform1f(defaultShader->getUniform("glfwTime"), (float)glfwGetTime());
 }
 
 void GameObject::bind_texture(TextureManager& textureManager)
 {
 	textureManager.texturesList[textureID].bind();
+}
+
+void GameObject::destroy()
+{
+	auto& gm = GameManager::getInstance();
+	gm.destroy(this);
+}
+
+void TilePlane::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
+{
+
+	if (get_render_object()->get_render_state() == false)
+	{
+		return;
+	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	auto* planeShader = &shaderManager.getShader(TILE_PLANE_SHADER_INDEX);
+	planeShader->bind();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, transform.position);
+	model = glm::rotate(model, glm::radians(transform.angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, transform.scale);
+
+	glUniformMatrix4fv(planeShader->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(camera.get_PV_static()));
+	glUniformMatrix4fv(planeShader->getUniform("transform"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform1i(planeShader->getUniform("tex0"), 0);
+	glUniform3f(planeShader->getUniform("planeColor"), color.x, color.y, color.z);
+
+	//glDisable(GL_BLEND);
+
+
 }

@@ -37,3 +37,4 @@ struct Mesh
 };
 
 void loadMeshFromFile(const char* path, Mesh& mesh);
+void loadMeshFromFile(const char* path, bool flipV, Mesh& mesh);

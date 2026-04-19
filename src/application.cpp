@@ -8,6 +8,7 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
+#include <mainScene.h>
 
 void init_ui(GLFWwindow* window, ImGuiIO& output);
 
@@ -55,10 +56,13 @@ int Application::init()
 void Application::run()
 {
 
-	TestingScene scene;
+	//TestingScene testScene;
+
 	PickingTexture picker;
 
 	ImGuiIO io;
+
+	MainScene scene;
 
 	scene.configure_inputs(input);
 
@@ -100,7 +104,7 @@ void Application::run()
 
 		double x, y;
 		glfwGetCursorPos(window, &x, &y);
-		scene.camera.currentPixel = picker.read_pixel(x, height - y - 1);
+		scene.sceneCamera.currentPixel = picker.read_pixel(x, height - y - 1);
 
 		picker.disable_writing();
 
@@ -113,6 +117,8 @@ void Application::run()
 		scene.render();
 
 		scene.update();
+
+		scene.render_ui();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

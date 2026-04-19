@@ -7,6 +7,9 @@
 #include <memory.h>
 #include <random>
 #include <player.h>
+#include <unitAction.h>
+#define TILE_OFFSET 1.95f
+
 struct Transform
 {
 	glm::vec3 position = glm::vec3(0.0f);
@@ -36,10 +39,11 @@ public:
 	virtual void init() {};
 	virtual void tick() {};
 	virtual void render();
-	virtual void picking_render(ShaderManager& shaderManager, Camera& camera);
-	virtual void bind_shader(ShaderManager& shaderManager, Camera& camera);
+	virtual void picking_render(ShaderManager& shaderManager, TempCamera& camera);
+	virtual void bind_shader(ShaderManager& shaderManager, TempCamera& camera);
 	virtual void bind_texture(TextureManager& textureManager);
 	virtual void on_click() { std::cout << "Clicking GameObject \n"; };
+	virtual void destroy();
 
 	virtual void initialize_mesh(Mesh& meshData)
 	{
@@ -55,8 +59,13 @@ public:
 		meshID = counter;
 		counter++;
 	}
-};
 
+	RenderObject* get_render_object()
+	{
+		return &objectMesh;
+	}	
+
+};
 struct TileData
 {
 	int x, y = 0;
@@ -68,7 +77,34 @@ struct TileData
 
 };
 
-class TileObject : public GameObject
+class Tile : public GameObject
+{
+public:
+	Vec2Int tileCoord;
+};
+
+class TilePlane : public GameObject // mozda temporary da oznaci gdje se jedinice mogu kretat, i granice gradova
+{
+private:
+	glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+public:
+	Vec2Int tileCoord;
+	
+	void bind_shader(ShaderManager& shaderManager, TempCamera& camera) override;
+	void init() override
+	{
+		textureID = PLANE_TEXTURE;
+	}
+
+	void set_color(glm::vec3 newColor)
+	{
+		color = newColor;
+	}
+
+};
+
+
+class TileObjectObsolete : public GameObject
 {
 public:
 	bool isForest = false; // temp
@@ -77,7 +113,7 @@ public:
 
 	std::string nationTag = "NULL";
 
-	void bind_shader(ShaderManager& shaderManager, Camera& camera) override;
+	void bind_shader(ShaderManager& shaderManager, TempCamera& camera) override;
 
 	void init() override
 	{
@@ -124,7 +160,7 @@ class CityObject : public GameObject
 {
 public:
 	CityData data;
-	std::vector<TileObject*> cityTiles; // all tiles owned by the city
+	std::vector<TileObjectObsolete*> cityTiles; // all tiles owned by the city
 	void init() override
 	{
 		textureID = CITY_TEXTURE;
@@ -134,15 +170,61 @@ public:
 	}
 };
 
+
+#define UNIT_SETTLER_ID 0
+#define UNIT_DEBUG_ID 100
+
+struct UnitLoadData
+{
+	std::string UNIT_TYPE;
+	std::string MODEL_PATH;
+	
+	uint8_t UNIT_ACTIONS[5]{ UNIT_UNDEFINED_ACTION ,UNIT_UNDEFINED_ACTION ,UNIT_UNDEFINED_ACTION ,UNIT_UNDEFINED_ACTION ,UNIT_UNDEFINED_ACTION };
+
+	uint8_t UNIT_ID;
+	uint8_t TEXTURE_ID;
+	uint8_t UNIT_SHADER_ID;
+
+};
+
+struct UnitBaseData
+{
+	uint8_t UNIT_ID = 0;
+	uint8_t PLAYER_ID = 0;
+
+	uint8_t MOVE_POINTS = 0;
+	uint8_t HEALTH_POINTS = 0;
+	uint8_t ATTACK_POINTS = 0;
+	uint8_t MAGIC_ATTACK_POINTS = 0;
+
+	uint8_t ATTACK_DEFENSE = 0;
+	uint8_t MAGIC_DEFENSE = 0;
+
+};
+
+struct UnitLiveData
+{
+	float currentHP;
+	float currentExperience;
+};
+
+
 class GameManager
 {
+private:
+	GLuint playerCounter = 0;
 public:
 	std::vector<std::unique_ptr<GameObject>> gameobjects;
+	std::vector<UnitLoadData> unitsLoadJson; 
+	std::vector<UnitBaseData> unitsBaseJson;
+
+	std::unordered_map<int, UnitLoadData> unitBase; // loading podatci za unit-a
 
 	std::vector<Player> playerList;
 
 	GLuint meshCounter = 0;
-	GLuint playerCounter = 0;
+
+	UnitActionInitializer unitActionInit;
 
 	static GameManager& getInstance()
 	{
@@ -159,17 +241,69 @@ public:
 		return *static_cast<T*>(gameobjects.back().get());
 	}
 
-	glm::vec3 get_player_color(const std::string& tag)
+	template<typename T>
+	void destroy(T* object)
+	{
+		auto it = std::remove_if(gameobjects.begin(), gameobjects.end(),
+			[&](const std::unique_ptr<GameObject>& obj)
+			{
+				return obj.get() == object;
+			});
+
+		gameobjects.erase(it, gameobjects.end());
+	}
+
+	void assign_player_id(Player* player)
+	{
+		player->playerData.playerID = playerCounter;
+		playerCounter++;
+	}
+
+	Player* get_player_from_id(int id)
 	{
 		for (auto& player : playerList)
 		{
-			if (player.data.factionTag == tag)
+			if (player.playerData.playerID == id)
 			{
-				return player.data.color;
+				return &player;
 			}
 		}
-		return glm::vec3(1.0f); // default white
+		std::cout << "Player with ID " << id << " not found.\n";
+		return nullptr;
 	}
 
+	// TO DO : odvoji sve objekte koje pripadaju mapi u odvojenu listu i trazi preko te liste
+	Tile* get_tile_from_coord(int xpos, int ypos)
+	{
+		for (auto& obj : gameobjects)
+		{
+			if (Tile* tile = dynamic_cast<Tile*>(obj.get()))
+			{
+				if (tile->tileCoord.x == xpos && tile->tileCoord.y == ypos)
+				{
+					return tile;
+				}
+			}
+		}
+		return nullptr;
+	}
 
+	template<typename T>
+	std::vector<T*> get_objects_of_type()
+			{
+		std::vector<T*> result;
+		for (auto& obj : gameobjects)
+		{
+			if (T* casted = dynamic_cast<T*>(obj.get()))
+			{
+				result.push_back(casted);
+			}
+		}
+		return result;
+	}
+
+	void add_unit_data(int id,UnitLoadData data)
+	{
+		unitBase[id] = data;
+	}
 };

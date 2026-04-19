@@ -4,7 +4,9 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <pickingTexture.h>
 
-class Camera
+// cijela ova klasa je za kurac, treba spalit i bacit i ispocetka sve
+
+class TempCamera
 {
 private:
 
@@ -33,7 +35,7 @@ public:
 
 	PickingTexture::PixelInfo currentPixel;
 
-	Camera(unsigned int width, unsigned int height)
+	TempCamera(unsigned int width, unsigned int height)
 	{
 		WIDTH = width;
 		HEIGHT = height;

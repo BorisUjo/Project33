@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glad/glad.h>
 #include <input.h>
 #include <fstream>
 #include <iostream>
@@ -8,13 +9,13 @@
 #include <string>
 #include <texture.h>
 #include <demoShaderLoader.h>
-
 #define TILES_TEXTURE 0
 #define HILL_TEXTURE 1
 #define TREE_TEXTURE 2
 #define UNIT_TEXTURE 3
 #define MOUNTAIN_2_TEXTURE 4
 #define CITY_TEXTURE 5
+#define PLANE_TEXTURE 6
 
 
 
@@ -52,6 +53,7 @@ struct ShaderManager
 #define DEFAULT_SHADER_INDEX 0
 #define PICKING_SHADER_INDEX 1
 #define TILE_SHADER_INDEX 2
+#define TILE_PLANE_SHADER_INDEX 3
 
 	std::vector<Shader> shadersList;
 	void loadShader(const char* vertexPath, const char* fragmentPath)
@@ -94,4 +96,5 @@ public:
 	virtual void render() {};
 	virtual void picking_render() {};
 	virtual void configure_inputs(InputHandler& handler) {};
+
 };

@@ -1,34 +1,32 @@
 #pragma once
-
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
-
-// Forward declarations to avoid circular includes
-class Unit;
-class GameManager;
-struct Mesh;
-struct TileData;
-
+extern class Tile;
+extern struct UnitLoadData;
+extern class Unit;
 struct PlayerData
 {
-	int playerID = 0;
-	std::string playerName = "Player";
-	std::string factionTag = "CRO";
-
-	glm::vec3 color = glm::vec3(0.761f, 0.369f, 0.737f); // temp
-
-	int cash = 10;
+	int playerID;
+	std::string factionTag;
 };
+
+
 
 class Player
 {
-public:
-	PlayerData data;
+private:
 	std::vector<Unit*> units;
-
+	glm::vec3 playerColor = glm::vec3(0,0,1.0f);
 public:
-	// Implementation should be moved to a .cpp file to avoid needing full types here
-	void initialise(GameManager& gm, Mesh& startUnitMesh, const TileData& startTile);
+	PlayerData playerData;
+
+	void initialise(Tile* startTile);
+	void spawn_unit( UnitLoadData data, Tile* tile);
+
+	std::vector<Unit*> get_units()
+	{
+		return units;
+	}
 
 };

@@ -8,7 +8,7 @@
 #include <demoShaderLoader.h>
 #include <algorithm>
 
-glm::mat4 Camera::projection_view_matrix()
+glm::mat4 TempCamera::projection_view_matrix()
 {
 	view = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(cameraFOV), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
@@ -18,7 +18,7 @@ glm::mat4 Camera::projection_view_matrix()
 }
 
 
-void Camera::input(GLFWwindow* window)
+void TempCamera::input(GLFWwindow* window)
 {
 
 	if (!mouseLock)
@@ -121,7 +121,7 @@ void Camera::input(GLFWwindow* window)
 
 }
 
-glm::mat4 Camera::get_PV_static()
+glm::mat4 TempCamera::get_PV_static()
 {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);

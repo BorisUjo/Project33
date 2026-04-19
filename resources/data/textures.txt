@@ -4,3 +4,4 @@ tree.png
 container.png
 mount2.png
 town.png
+tilePlane.png
