@@ -101,8 +101,6 @@ public:
 		color = newColor;
 	}
 
-	void set_active(bool state);
-
 };
 
 
@@ -217,7 +215,6 @@ private:
 	GLuint playerCounter = 0;
 public:
 	std::vector<std::unique_ptr<GameObject>> gameobjects;
-	std::vector<TilePlane*> tilePlanes;
 	std::vector<UnitLoadData> unitsLoadJson; 
 	std::vector<UnitBaseData> unitsBaseJson;
 
@@ -309,16 +306,4 @@ public:
 	{
 		unitBase[id] = data;
 	}
-
-	TilePlane* find_tile_plane(Vec2Int coord)
-	{
-		for (auto& plane : tilePlanes)
-		{
-			if (plane->tileCoord.x == coord.x && plane->tileCoord.y == coord.y)
-			{
-				return plane;
-			}
-		}
-	}
-
 };
