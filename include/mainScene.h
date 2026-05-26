@@ -36,7 +36,7 @@ struct ImGuiConsole
 
     void draw(const char* title, bool* open = nullptr)
     {
-        ImGui::SetNextWindowSize(ImVec2(520, 300), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(420, 300), ImGuiCond_FirstUseEver);
         if (!ImGui::Begin(title, open))
         {
             ImGui::End();

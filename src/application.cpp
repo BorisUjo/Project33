@@ -32,7 +32,7 @@ int Application::init()
 
 
 
-	window = glfwCreateWindow(1280, 1000, "[_] PROJECT: 33", NULL, NULL);
+	window = glfwCreateWindow(1200, 840, "[_] PROJECT: 33", NULL, NULL);
 	//window = glfwCreateWindow(640, 480, "[_] PROJECT: 33", NULL, NULL);
 	if (!window)
 	{
