@@ -16,6 +16,9 @@
 #define MOUNTAIN_2_TEXTURE 4
 #define CITY_TEXTURE 5
 #define PLANE_TEXTURE 6
+#define DEBUG_HUD_TEXTURE 7
+#define HOS_DEBUG_FLAG 8
+#define DEBUG_HAJDUK_TEXTURE 9
 
 
 
@@ -45,6 +48,18 @@ struct TextureManager
 
 	}
 
+	Texture* find_texture_by_path(const char* path)
+	{
+		for (auto& texture : texturesList)
+		{
+			if (texture.get_path() == path)
+			{
+				return &texture;
+			}
+		}
+		return nullptr;
+	}
+
 };
 
 struct ShaderManager
@@ -54,6 +69,7 @@ struct ShaderManager
 #define PICKING_SHADER_INDEX 1
 #define TILE_SHADER_INDEX 2
 #define TILE_PLANE_SHADER_INDEX 3
+#define HUD_ELEMENT_SHADER_INDEX 4
 
 	std::vector<Shader> shadersList;
 	void loadShader(const char* vertexPath, const char* fragmentPath)

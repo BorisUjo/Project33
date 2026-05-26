@@ -17,14 +17,8 @@ glm::mat4 TempCamera::projection_view_matrix()
 	return projection * view;
 }
 
-
-void TempCamera::input(GLFWwindow* window)
+void TempCamera::temp_input(GLFWwindow* window)
 {
-
-	if (!mouseLock)
-	{
-		return;
-	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		Position += speed * Orientation;
@@ -66,7 +60,21 @@ void TempCamera::input(GLFWwindow* window)
 	{
 		Position.y += speed;
 	}
+}
 
+
+void TempCamera::input(GLFWwindow* window)
+{
+
+	if (!keyLock)
+	{
+		temp_input(window);
+	}
+
+	if (!mouseLock)
+	{
+		return;
+	}
 
 	// Handles mouse inputs
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)

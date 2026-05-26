@@ -1,12 +1,17 @@
 #pragma once
 #include <glad/glad.h>
 #include <stb_image/stb_image.h>
+#include <string>
 class Texture
 {
 	GLuint textureID = 0;
+    std::string path;
 public:
 	bool initialise(const char* path);
 	void bind();
+
+	int get_id() const { return textureID; }
+	std::string get_path() const { return path; }
 
 public:
     Texture() = default;
@@ -38,4 +43,6 @@ public:
         if (textureID != 0)
             glDeleteTextures(1, &textureID);
     }
+
+
 };

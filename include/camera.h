@@ -42,12 +42,19 @@ public:
 
 
 	}
-
+	glm::mat4 get_view()
+	{
+		{
+			return glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+		}
+	}
 	glm::mat4 projection_view_matrix();
 	glm::mat4 get_PV_static();
 	void input(class GLFWwindow* window);
+	void temp_input(class GLFWwindow* window);
 public:
 	bool mouseLock = false;
+	bool keyLock = false;
 private:
 
 	bool firstClick = true;	

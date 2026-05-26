@@ -35,6 +35,10 @@ void Unit::set_tile(Tile* tile)
 	transform.position = glm::vec3(tile->transform.position.x, 0.5f, tile->transform.position.z);
 }
 
+void Unit::move_tile(Tile* tile)
+{
+}
+
 std::vector<Vec2Int> Unit::getAvailableTiles()
 {
 	auto& gameManager = GameManager::getInstance();
@@ -55,6 +59,44 @@ std::vector<Vec2Int> Unit::getAvailableTiles()
 	}
 
 	return availableTiles;
+}
+
+std::vector<Tile*> Unit::getAvailableTileObjects()
+{
+	auto& gameManager = GameManager::getInstance();
+	std::vector<Tile*> availableTileObjects;
+
+	for (auto& tileCoord : getAvailableTiles())
+	{
+		auto* tile = gameManager.find_tile(tileCoord);
+		if (tile)
+		{
+			availableTileObjects.push_back(tile);
+		}
+	}
+
+	return availableTileObjects;
+}
+
+void Unit::display_available_tiles(bool state)
+{
+	auto& gm = GameManager::getInstance();
+	auto& tileCoords = getAvailableTiles();
+	for (auto& tile : tileCoords)
+	{
+		auto* plane = gm.find_tile_plane(tile);
+		if (plane)
+		{
+			plane->set_active(state);
+			plane->set_color(glm::vec3(0.2f, 0.6f, 0.1f)); // temp
+		}
+	}
+}
+
+void Unit::reset_move_points()
+{
+	// DEBUG
+	liveData.MOVE_POINTS = 5;
 }
 
 void Unit::on_click()

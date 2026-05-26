@@ -6,6 +6,8 @@ bool Texture::initialise(const char* path)
 	int height = 0;
 	int comp = 0;
 
+	this->path = path;
+
 	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char* data = stbi_load(path, &width, &height, &comp, STBI_rgb_alpha);

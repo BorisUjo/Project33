@@ -30,7 +30,10 @@ int Application::init()
 
 	input.addKeyBind({ GLFW_KEY_ESCAPE, [this]() { glfwSetWindowShouldClose(this->window, GLFW_TRUE); } });
 
-	window = glfwCreateWindow(640, 480, "[_] PROJECT: 33", NULL, NULL);
+
+
+	window = glfwCreateWindow(1280, 1000, "[_] PROJECT: 33", NULL, NULL);
+	//window = glfwCreateWindow(640, 480, "[_] PROJECT: 33", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
