@@ -1,0 +1,12 @@
+[
+    {
+        "ATTACK_DEFENSE": 2,
+        "ATTACK_POINTS": 0,
+        "HEALTH_POINTS": 5,
+        "MAGIC_ATTACK_POINTS": 0,
+        "MAGIC_DEFENSE": 2,
+        "MOVE_POINTS": 0,
+        "PLAYER_ID": 0,
+        "UNIT_ID": 0
+    }
+]

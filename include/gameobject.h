@@ -252,8 +252,8 @@ struct TownStatLevel
 	}
 };
 
-#define BUILDING_GRAIN_MILL_ID 0
-#define BUILDING_TOWN_HALL_ID 1 // TODO: u json, najvjv za buildinge ukljuci i NATION_CULTURE
+#define BUILDING_GRAIN_MILL_ID 1
+#define BUILDING_TOWN_HALL_ID 0 // TODO: u json, najvjv za buildinge ukljuci i NATION_CULTURE
 
 class Building : public GameObject
 {
@@ -369,12 +369,13 @@ public:
 
 };
 
+// pomakni u konstante
 
-#define WOOD_RESOURCE_ID 0
-#define IRON_RESOURCE_ID 1
-#define STONE_RESOURCE_ID 2
-#define GOLD_RESOURCE_ID 3
-#define FOOD_RESOURCE_ID 4
+#define FOOD_RESOURCE_ID 0
+#define GOLD_RESOURCE_ID 1
+#define WOOD_RESOURCE_ID 2
+#define IRON_RESOURCE_ID 3
+#define STONE_RESOURCE_ID 4
 
 
 struct TownData
@@ -400,7 +401,7 @@ struct TownData
 
 
 };
-// DEBUG: pomakni u bazu/konstante
+// DEBUG: pomakni u konstante
 #define BASE_CULTURE_PRODUCTION 2
 #define BASE_FOOD_PRODUCTION 5
 

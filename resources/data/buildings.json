@@ -1,0 +1,18 @@
+[
+    {
+        "ID": 1,
+        "description": "Produces food, boosts surrounding farm tiles",
+        "iconPathName": "container.png",
+        "modelPath": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/town.obj",
+        "name": "Grain Mill",
+        "texturePathName": "container.png"
+    },
+    {
+        "ID": 0,
+        "description": "centre",
+        "iconPathName": "hos.png",
+        "modelPath": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/town.obj",
+        "name": "Town Hall",
+        "texturePathName": "town.png"
+    }
+]

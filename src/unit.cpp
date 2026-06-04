@@ -123,6 +123,9 @@ void SettleAction::execute(Unit* unit)
 	auto& gameManager = GameManager::getInstance();
 
 	unit->destroy();
+
+	auto& town = gameManager.instantiate<Town>();
+	town.town_init(unit->get_current_tile(), unit->get_live_data().PLAYER_ID);
 }
 
 void SettleAction::initialise()

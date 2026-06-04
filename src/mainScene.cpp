@@ -247,8 +247,15 @@ void ImageText(GLuint texID, const char* fmt, ...) {
 }
 void MainScene::render_ui()
 {
-	ImGui::SetNextWindowPos(ImVec2(-5, 0), ImGuiCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Always);
+
+	ImVec2 display = ImGui::GetIO().DisplaySize;
+	float  debugW = 300.f;
+	float  consoleH = 220.f;
+	float  viewportW = display.x - debugW;
+
+	// turn panel
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Always);
 	ImGuiWindowFlags flags = 0;
 	flags |= ImGuiWindowFlags_NoResize;
 	flags |= ImGuiWindowFlags_NoMove;
@@ -456,8 +463,8 @@ void MainScene::render_ui()
 
 	if (debugMode)
 	{
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowSize().x + 580, 0), ImGuiCond_Once);
-		ImGui::SetNextWindowSize(ImVec2(300, 700), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(viewportW, 0), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(debugW, display.y), ImGuiCond_Always);
 		ImGui::Begin("Debug Menu", 0, flags);
 
 		if (!debugMenu.displayingDebugWindowSettings)
@@ -710,12 +717,16 @@ void MainScene::render_ui()
 
 		ImGui::End();
 
-
+		ImGui::SetNextWindowPos(ImVec2(0, display.y - consoleH), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(viewportW, consoleH), ImGuiCond_Always);
 		console.draw("Console");
 
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 365, 0), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(viewportW + 4, 4), ImGuiCond_Always);
 		ImGui::SetNextWindowBgAlpha(0.4f);
-		ImGui::Begin("##fps", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("##fps", nullptr,
+			ImGuiWindowFlags_NoDecoration |
+			ImGuiWindowFlags_NoInputs |
+			ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::Text("FPS: %d", debugMenu.currentFPS);
 		ImGui::End();
 
@@ -810,11 +821,18 @@ void MainScene::load_building_Data()
 
 void MainScene::mouse_left_click()
 {
+
+
+	if (ImGui::GetIO().WantCaptureMouse)
+		return;
+
 	auto& gameManager = GameManager::getInstance();
 
 	auto& units = gameManager.get_objects_of_type<Unit>();
 	//auto& towns = gameManager.get_objects_of_type<Town>();
 	auto& buildings = gameManager.get_objects_of_type<Building>();
+
+
 
 	if (sceneCamera.currentPixel.objectID == 0)
 	{

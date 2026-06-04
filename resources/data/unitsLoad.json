@@ -1,0 +1,16 @@
+[
+    {
+        "MODEL_PATH": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/flag_post_fixed_uv.obj",
+        "SHADER_ID": 0,
+        "TEXTURE_ID": 3,
+        "UNIT_ACTIONS": [
+            0,
+            1,
+            255,
+            255,
+            255
+        ],
+        "UNIT_ID": 0,
+        "UNIT_TYPE": "SETTLER"
+    }
+]
