@@ -2,3 +2,4 @@ vertex.vert fragment.frag
 pickingVertex.vert pickingFragment.frag
 tileVert.vert tileFrag.frag
 tilePlane.vert tilePlane.frag
+hudElement.vert hudElement.frag

@@ -16,8 +16,8 @@
 #define MOUNTAIN_2_TEXTURE 4
 #define CITY_TEXTURE 5
 #define PLANE_TEXTURE 6
-#define DEBUG_HUD_TEXTURE 7
-#define HOS_DEBUG_FLAG 8
+#define DEBUG_HUD_TEXTURE    7
+#define HOS_DEBUG_FLAG       8
 #define DEBUG_HAJDUK_TEXTURE 9
 
 

@@ -154,6 +154,7 @@ void MainScene::init()
 		plane->set_render_borders(gameManager.waterTiles);
 	}
 
+
 }
 
 void MainScene::update()

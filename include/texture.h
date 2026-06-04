@@ -20,7 +20,7 @@ public:
     Texture& operator=(const Texture&) = delete;
 
     Texture(Texture&& other) noexcept
-        : textureID(other.textureID)
+        : textureID(other.textureID), path(std::move(other.path)) // add path
     {
         other.textureID = 0;
     }
@@ -33,6 +33,7 @@ public:
                 glDeleteTextures(1, &textureID);
 
             textureID = other.textureID;
+            path = std::move(other.path); // add path
             other.textureID = 0;
         }
         return *this;

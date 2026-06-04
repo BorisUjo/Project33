@@ -135,7 +135,7 @@ glm::mat4 TempCamera::get_PV_static()
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	view = glm::lookAt(Position, Position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOV), (float)(window_width / window_height), nearPlane, farPlane);
+	projection = glm::perspective(glm::radians(FOV), (float)window_width / (float)window_height, nearPlane, farPlane);
 
 	return projection * view;
 

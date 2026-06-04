@@ -195,7 +195,7 @@ void Town::town_init(Tile* townCentre, int ownerID)
 
 	//auto& gm = GameManager::getInstance();
 	townHUD = &gm.instantiate<ElementHUD>();
-	townHUD->set_anchor(&transform);
+	townHUD->set_anchor(&townCentre->transform);
 
 	townHUD->create_town_hud();
 
@@ -442,7 +442,8 @@ void ElementHUD::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 	model = model * billboard;
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	model = glm::scale(model, transform.scale);
-
+	glUniform4f(hudShader->getUniform("tintColor"), 1.0f, 1.0f, 1.0f, 1.0f);
+	glUniform1f(hudShader->getUniform("opacity"), 1.0f);
 	glUniformMatrix4fv(hudShader->getUniform("PVM"), 1, GL_FALSE, glm::value_ptr(camera.get_PV_static()));
 	glUniformMatrix4fv(hudShader->getUniform("transform"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniform1i(hudShader->getUniform("tex0"), 0);
@@ -472,7 +473,7 @@ void ElementHUD::update_position()
 void ElementHUD::create_debug_hud()
 {
 	textureID = DEBUG_HUD_TEXTURE;
-	transform.scale = glm::vec3(2.0f, 0.0f, 0.6f);
+	transform.scale = glm::vec3(2.0f, 1.0f, 0.6f);
 
 	if (anchor)
 	{
@@ -509,7 +510,7 @@ void ElementHUD::create_unit_hud()
 void ElementHUD::create_town_hud()
 {
 	textureID = DEBUG_HUD_TEXTURE;
-	transform.scale = glm::vec3(1.5f, 0.0f, 0.4f);
+	transform.scale = glm::vec3(1.5f, 1.0f, 0.4f);
 
 	if (anchor)
 	{

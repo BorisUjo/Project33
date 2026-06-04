@@ -5,3 +5,6 @@ container.png
 mount2.png
 town.png
 tilePlane.png
+hos.png
+livaja.png
+grb.png
