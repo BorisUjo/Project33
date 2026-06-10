@@ -18,8 +18,8 @@ using json = nlohmann::json;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UnitLoadData, UNIT_TYPE, MODEL_PATH, UNIT_ID, TEXTURE_ID, SHADER_ID, UNIT_ACTIONS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UnitBaseData, UNIT_ID, PLAYER_ID, MOVE_POINTS, HEALTH_POINTS, ATTACK_POINTS, MAGIC_ATTACK_POINTS, ATTACK_DEFENSE, MAGIC_DEFENSE)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResourceData, ID, name, category, description, iconPath)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BuildingData, ID, name, description, modelPath, texturePathName, iconPathName)
-
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BuildingData, ID, name, description, modelPath, texturePathName, iconPathName, buildingYield)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResourceYieldData, resourceID, yieldAmount)
 UnitLoadData generate_debug()
 {
 	UnitLoadData data;
@@ -153,7 +153,7 @@ void MainScene::init()
 	{
 		plane->set_render_borders(gameManager.waterTiles);
 	}
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 
 }
 
@@ -277,6 +277,7 @@ void MainScene::render_ui()
 		for (auto& town : gm.get_objects_of_type<Town>())
 		{
 			town->end_turn();
+			town->update_turn();
 		}
 
 	}
@@ -363,18 +364,14 @@ void MainScene::render_ui()
 			selectedTown->display_borders(true);
 			selectedTown->border_color();
 
-			std::vector<TilePlane*> townPlanes;
-
-			for (auto& tiles : selectedTown->get_owned_tiles())
+			for (auto& tile : selectedTown->get_owned_tiles())
 			{
-				auto* tile = gm.find_tile_plane(tiles->tileCoord);
-				tile->set_transparency(0.92f, 0.3f);
+				auto* mapPlane = gm.find_tile_plane(tile->tileCoord);
+				if (mapPlane)
+				{
+					mapPlane->set_active(false); // or reset to default state
+				}
 			}
-
-			//for (auto* plane : townPlanes)
-			//{
-			//	plane->set_render_borders(townPlanes);
-			//}
 
 
 		}
@@ -406,30 +403,40 @@ void MainScene::render_ui()
 				{
 					if (ImGui::Button(buildingOption.name.c_str(), ImVec2(-1, 0)))
 					{
-
 						activeBuildingToProduce = buildingOption;
 
-						std::vector<TilePlane*>  available_pool;
+						// Dim ALL owned tiles - both town planes AND map planes
+						for (auto& tile : selectedTown->get_owned_tiles())
+						{
+							// Town's own plane
+							auto* townPlane = selectedTown->get_town_tile_plane(tile->tileCoord);
+							if (townPlane)
+								townPlane->set_transparency(0.92f, 0.15f);
+
+							// Map-level plane at same coord
+							auto* mapPlane = gm.find_tile_plane(tile->tileCoord);
+							if (mapPlane)
+								mapPlane->set_transparency(0.92f, 0.15f);
+						}
+
+						std::vector<TilePlane*> available_pool;
 						for (auto& tile_productive : selectedTown->get_production_tiles())
 						{
-							selectedTown->get_town_tile_plane(tile_productive->tileCoord)->set_transparency(0.92f, 0.3f);
-							available_pool.push_back(selectedTown->get_town_tile_plane(tile_productive->tileCoord));
-							//available_pool.push_back(gm.find_tile_plane(tile_productive->tileCoord)); // IZ SELECTED_TOWN TRAZI TE TILE_PLANEOVE, OVDJE SE KONFLIKTAJU SA ONIMA IZ MAPE GENERIRANI (ima 2 kljuca za tu poziciju)
+							auto* townPlane = selectedTown->get_town_tile_plane(tile_productive->tileCoord);
+							if (townPlane)
+							{
+								townPlane->set_transparency(0.92f, 0.3f);
+								available_pool.push_back(townPlane);
+							}
+
+							// Also dim the map plane underneath
+							auto* mapPlane = gm.find_tile_plane(tile_productive->tileCoord);
+							if (mapPlane)
+								mapPlane->set_transparency(0.92f, 0.15f);
 						}
 
 						selectedTown->border_color(glm::vec3(0.6f, 0.2f, 0.3f));
-
 						selectedTown->border_color_pool(available_pool, glm::vec3(0.2f, 1.0f, 0.2f));
-
-
-						/*for (auto& available : selectedTown->get_production_tiles())
-						{
-							gm.find_tile_plane(available->tileCoord)->set_color(glm::vec3(0.2f, 1.0f, 0.2f));
-
-							gm.find_tile_plane(available->tileCoord)->set_active(true);
-							gm.find_tile_plane(available->tileCoord)->reset_render_borders();
-
-						}*/
 
 						activeTownTab = TOWN_TAB::PRODUCTION;
 					}

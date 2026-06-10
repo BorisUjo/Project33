@@ -1,18 +1,62 @@
 [
     {
-        "ID": 1,
-        "description": "Produces food, boosts surrounding farm tiles",
-        "iconPathName": "container.png",
-        "modelPath": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/town.obj",
-        "name": "Grain Mill",
-        "texturePathName": "container.png"
-    },
-    {
         "ID": 0,
-        "description": "centre",
+        "buildingYield": [
+            {
+                "resourceID": 0,
+                "yieldAmount": 2
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            }
+        ],
+        "description": "Centre",
         "iconPathName": "hos.png",
         "modelPath": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/town.obj",
         "name": "Town Hall",
         "texturePathName": "town.png"
+    },
+    {
+        "ID": 1,
+        "buildingYield": [
+            {
+                "resourceID": 0,
+                "yieldAmount": 5
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            },
+            {
+                "resourceID": 0,
+                "yieldAmount": 0
+            }
+        ],
+        "description": "Makes bread",
+        "iconPathName": "container.png",
+        "modelPath": "C:/Users/boris/OneDrive/Documents/GitHub/project_33/resources/models/flag_post_fixed_uv.obj",
+        "name": "Grain Mill",
+        "texturePathName": "container.png"
     }
 ]

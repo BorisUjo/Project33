@@ -1,11 +1,158 @@
-21.3.2026 - 31.3.2026
----------------------
--> očisti kod, sve zasad nepotrebno maknuti (šminka, lijepi shaderi, teksture) to kasnije ide
--> bolji nacin generiranja mape
--> osnovne mehanike grada (turn based gradnja, ekspanzija)
--> UI za grad (tab za gradnju, city overview)
--> vise jedinica (ofenzivna jedinica)
--> simulacija ratovanja
+PROJECT 33 — TO DO
+==================
+✅ DONE   |   ❌ NOT STARTED   |   🚧 IN PROGRESS
 
----------------------
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  UNITS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+✅  Unit Settle Action
+      Deselect unit and hide UI when executing function
+
+✅  Unit Load Data
+      - Setup JSON loading for UnitLoadData and UnitBaseData
+      - Dictionary that takes in the unit ID and returns the UnitBaseData
+      - Separate constant data that won't be changing from the live data
+      ❌ Make stats from unit data more modular to support items and buffs/debuffs
+         (e.g. ATTACK_DAMAGE should have the base value but return it with all
+         item and stat modifiers combined)
+
+❌  Unit Factory
+      Pass loadData and baseData to the unit factory
+      (currently assembled in debug menu but never forwarded — mainScene.cpp, Create Unit Data)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  TOWNS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚧  Town HUD
+      Displays name, owner, population
+
+🚧  Town Growth & Food Mechanics
+
+🚧  Town UI
+
+🚧  Town Interface
+      Basic functionality (town production, town focus, town market?)
+
+✅  Town Resources
+      In Town UI, set up resources overview with icons and values
+      (food, gold, production)
+
+✅  Town Expansion
+      Expand using culture points
+
+❌  Town GameObject Init
+      Mesh and texture should be influenced by the player CULTURE
+
+❌  Town TilePlane
+      Plug player country for color (Town::town_init)
+      Currently hardcoded to glm::vec3(0.0f, 0.4f, 0.8f) in both town_init and add_tile
+
+❌  Town Culture
+      - In the Town Interface, player should be able to enable or disable
+        automatic culture spread
+      - Allows player to manually select which tiles they want to occupy
+
+❌  Town Culture Level-Up
+      When culture level-up triggers:
+      - Add level-up bonuses
+      - Trigger level-up event (message, animation, etc.)
+      - Pull next-level thresholds from JSON instead of hardcoded toNextLevel = 10
+      (gameobject.h — TownStatLevel::add_points)
+
+❌  Town Resources Manager — Rework
+      get_food_production(), get_food_consumption(), get_culture_production() are all
+      placeholder/hardcoded logic; rework with proper data-driven values
+      (gameobject.h — TownResourcesManager, marked "rework all this")
+
+❌  Town Initial Population
+      initialise(10) is hardcoded in Town::town_init — pull from data/JSON
+      New population added via add_population() always defaults to FARMER + HAPPY;
+      should factor in town state
+
+❌  Building Texture
+      replace_texture(CITY_TEXTURE) in Building::building_init is temporary;
+      use the actual texture from BuildingData (texturePathName)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  HUD & UI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅  ElementHUD — Setup different interfaces for town and unit
+✅  ElementHUD — Render above everything, disable depth
+❌  ElementHUD — Render separately from gameobjects list
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RENDERING & OPTIMISATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌  TilePlane
+      - Optimise, make it work with Unit's movable tiles display
+      - Add uniforms for controlling transparency of border and fill
+        (towns should probably have lesser transparency)
+
+❌  Building Icons
+      Implement building icon loading in load_building_Data()
+      Infrastructure is already stubbed out but commented off
+      (mainScene.cpp — load_building_Data)
+
+❌  Optimisation — Check if shader or texture is already bound, skip if so
+❌  Optimisation — Figure out better way for rendering thousands of gameobjects
+❌  Combine Grass Textures — Create seamless texture across the map
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  GAME SYSTEMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌  Turn Manager
+      - Implement turn manager that handles turn order, game stages, RNG events
+      - Tick all unit and town stats on turn end
+      - Move the inline End Turn logic in render_ui() into process_new_turn()
+        (mainScene.cpp — End Turn button, marked DEBUG)
+
+❌  Map Data Class
+      Move all map-related data (tiles, water tiles, tile planes) out of GameManager
+      and into the MapData class
+      (mainScene.cpp — init(), marked TODO)
+      Also: separate the map objects into their own list in GameManager and search
+      that list in get_tile_from_coord() instead of scanning all gameobjects
+      (gameobject.h — GameManager::get_tile_from_coord)
+
+❌  Technology
+      Plan in separate document
+
+❌  Base Stats — Move to JSON / constants
+      BASE_CULTURE_PRODUCTION, BASE_FOOD_PRODUCTION, BASE_GROSS_CONSUMPTION
+      are hardcoded #defines; move to data/JSON
+      (gameobject.h — marked DEBUG)
+
+❌  Universal JSON Loader
+      Figure out implementation to make loading/parsing into GameManager universal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CODE QUALITY & CLEAN UP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌  TilePlane Init
+      Duplicated TilePlane setup code appears in both Town::town_init and Town::add_tile;
+      extract into a dedicated TilePlane init function
+      (gameobject.cpp — both locations marked TO DO)
+
+❌  GameObject Optimisation
+      - Implement default constructor/destructor for GameObject;
+        constructor should call the virtual init function
+      - GameManager already does something similar — being called twice, FIX!
+
+🚧  Clean up — MainScene.cpp
+❌  Clean up — GameObject.h
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  UNSORTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Duplicate TilePlane — tile planes are created for every tile on start, so when
+  displaying the town use those and don't create new ones
+- Helper class in generic Building class - have a class that will handle all the resources the tile produces per turn 
+- Building - just like we did resourceYield, buildings should have a maintenance cost
+ 

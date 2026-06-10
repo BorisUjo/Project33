@@ -37,6 +37,11 @@ void Unit::set_tile(Tile* tile)
 
 void Unit::move_tile(Tile* tile)
 {
+	int distance = abs(tile->tileCoord.x - currentTile->tileCoord.x) +
+		abs(tile->tileCoord.y - currentTile->tileCoord.y);
+
+	liveData.MOVE_POINTS -= distance;
+	set_tile(tile);
 }
 
 std::vector<Vec2Int> Unit::getAvailableTiles()

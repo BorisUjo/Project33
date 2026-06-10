@@ -24,7 +24,7 @@ void main()
     if (hideWest  && texCoord.x < border)         isBorder = false;
 
     if (isBorder)
-        color = vec4(col.rgb, borderAlpha);
+        color = vec4(planeColor, borderAlpha);
     else
         color = vec4(planeColor, fillAlpha);
 }

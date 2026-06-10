@@ -24,7 +24,8 @@ public:
 	}
 	void consume_amount(int amount)
 	{
-		resourceAmount = std::max(0, resourceAmount - amount);
+		//resourceAmount = std::max(0, resourceAmount - amount);
+		resourceAmount -= amount;
 	}
 	int get_amount() const
 	{

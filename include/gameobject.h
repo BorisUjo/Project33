@@ -85,6 +85,7 @@ class Tile : public GameObject
 public:
 	Vec2Int tileCoord;
 	bool hasBuilding = false;
+	bool occupied = false;
 
 };
 
@@ -105,6 +106,7 @@ public:
 	Vec2Int tileCoord;
 
 	void bind_shader(ShaderManager& shaderManager, TempCamera& camera) override;
+	void render() override;
 	void init() override
 	{
 		textureID = PLANE_TEXTURE;
@@ -255,6 +257,7 @@ struct TownStatLevel
 #define BUILDING_GRAIN_MILL_ID 1
 #define BUILDING_TOWN_HALL_ID 0 // TODO: u json, najvjv za buildinge ukljuci i NATION_CULTURE
 
+
 class Building : public GameObject
 {
 private:
@@ -263,6 +266,7 @@ private:
 	class Town* parentTown = nullptr; // town kojem zgrada pripada
 public:
 	void building_init(BuildingData data, Tile* tile, class Town* town); // u ovom zamjeni model i teksturu
+	void update_turn();
 	BuildingData get_data() { return data; }
 	Town* get_parent_town() { return parentTown; }
 
@@ -447,6 +451,7 @@ public:
 
 		auto* foodRes = get_resource_by_id(FOOD_RESOURCE_ID);
 
+
 		foodRes->add_amount(get_food_production());
 		foodRes->consume_amount(get_food_consumption());
 
@@ -504,6 +509,8 @@ public:
 	void set_ownership(int ownerID) { townData.ownerID = ownerID; }
 	void add_tile(Tile* tile);
 	void add_building(BuildingData data, Tile* tile);
+	void set_borders_transparency(float borderAlpha, float fillAlpha);
+	void update_turn();
 	TownData* get_town_data() { return &townData; }
 	TownResourcesManager* get_resources_manager() { return &resourcesManager; }
 	// callbackovi za TownStatLevel

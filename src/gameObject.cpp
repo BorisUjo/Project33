@@ -70,6 +70,7 @@ void TilePlane::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 	// this should probably be done in scene's render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE); // don't write to depth buffer
 
 	auto* planeShader = &shaderManager.getShader(TILE_PLANE_SHADER_INDEX);
 	planeShader->bind();
@@ -94,6 +95,13 @@ void TilePlane::bind_shader(ShaderManager& shaderManager, TempCamera& camera)
 	//glDisable(GL_BLEND);
 
 
+}
+
+void TilePlane::render()
+{
+	get_render_object()->render();
+	glDepthMask(GL_TRUE); // restore after plane is drawn
+	glDisable(GL_BLEND);
 }
 
 void TilePlane::set_active(bool state)
@@ -190,7 +198,7 @@ void Town::town_init(Tile* townCentre, int ownerID)
 
 	stabilityLevel.set_current_level(&townData.stabilityPoints);
 
-	townData.population.initialise(10); // temporary, inicijalna populacija		
+	townData.population.initialise(5); // temporary, inicijalna populacija		
 	resourcesManager.initialise(&townData);
 
 	//auto& gm = GameManager::getInstance();
@@ -269,11 +277,29 @@ void Town::add_building(BuildingData data, Tile* tile)
 
 
 	auto* tilePlane = get_town_tile_plane(tile->tileCoord);
+
 	tilePlane->set_color(glm::vec3(0.8f, 0.2f, 0.3f));
 
 
-
+	tile->hasBuilding = true;
+	buildings.push_back(building);
 	building->building_init(data, tile, this);
+}
+
+void Town::set_borders_transparency(float borderAlpha, float fillAlpha)
+{
+	for (auto* plane : borderPlanes)
+	{
+		plane->set_transparency(borderAlpha, fillAlpha);
+	}
+}
+
+void Town::update_turn()
+{
+	for (auto& building : buildings)
+	{
+		building->update_turn();
+	}
 }
 
 void Town::init()
@@ -574,4 +600,18 @@ void Building::building_init(BuildingData data, Tile* tile, Town* town)
 	transform.position.y = 0.5f;
 
 
+}
+
+
+
+void Building::update_turn()
+{
+	for (auto& yield : data.buildingYield)
+	{
+		if (TownResource* resource = parentTown->get_resources_manager()->get_resource_by_id(yield.resourceID))
+		{
+			std::cout << "Building yield " << yield.resourceID << ": " << yield.yieldAmount << "\n";
+			resource->add_amount(yield.yieldAmount);
+		}
+	}
 }
